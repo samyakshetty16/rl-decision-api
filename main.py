@@ -6,7 +6,7 @@ from stable_baselines3 import DQN
 app = FastAPI()
 
 # Load trained RL model
-model = DQN.load("rl_models/dqn_model.zip", device="cpu")
+model = DQN.load("rl-decision-api/rl_models/dqn_model.zip", device="cpu")
 
 class StateInput(BaseModel):
     borrower_features: list
