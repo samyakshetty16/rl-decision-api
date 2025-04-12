@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: rl-loan-approval-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker
+    envVars:
+      - key: ENV
+        value: production
+    plan: free  # or 'starter' or 'pro'
+    region: oregon  # or any Render region
+    branch: main
+    autoDeploy: true

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+gunicorn
+joblib
+numpy
+pandas
+scikit-learn
+stable-baselines3
+gymnasium
+pydantic
