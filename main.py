@@ -27,6 +27,7 @@ def get_rl_action(input_data: StateInput):
     return {"rl_decision": action_map.get(int(action), "Unknown")}
 '''
 
+'''
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
@@ -73,3 +74,45 @@ def get_rl_action(input_data: StateInput):
     
     except Exception as e:
         return {"error": str(e)}
+'''
+
+
+import numpy as np
+from fastapi import FastAPI
+from pydantic import BaseModel
+from stable_baselines3 import DQN
+
+app = FastAPI()
+
+# Load the RL model (ensure this path is correct)
+model = DQN.load("rl_models/dqn_model.zip", device="cpu")
+
+# Define the input data schema
+class StateInput(BaseModel):
+    borrower_features: list  # Should contain 9 features
+    macro_features: list     # Should contain 14 features
+    xgb_predictions: list    # Should contain 2 features
+
+@app.post("/rl_decision")
+def get_rl_action(input_data: StateInput):
+    # Combine borrower features, macroeconomic features, and XGBoost predictions
+    state = input_data.borrower_features + input_data.macro_features + input_data.xgb_predictions
+    
+    # Ensure the state has exactly 34 features
+    if len(state) != 34:
+        return {"error": "Invalid input: Expected 34 features, got " + str(len(state))}
+    
+    # Convert state to numpy array
+    state = np.array(state).reshape(1, -1)
+    
+    # Get the RL model prediction (deterministic action)
+    action = model.predict(state, deterministic=True)[0]
+    
+    # Map actions to the decision
+    action_map = {
+        0: "Deny",
+        1: "Approve",
+        2: "Adjust terms"
+    }
+    
+    return {"rl_decision": action_map.get(int(action), "Unknown")}
