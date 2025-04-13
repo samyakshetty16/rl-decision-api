@@ -1,13 +1,17 @@
+
+
 services:
   - type: web
     name: rl-loan-approval-api
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker
+    startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:10000
     envVars:
       - key: ENV
         value: production
-    plan: free  # or 'starter' or 'pro'
-    region: oregon  # or any Render region
+      - key: PORT
+        value: 10000  # Render sets PORT, but this makes it explicit
+    plan: free  # or starter/pro
+    region: oregon  # optional: us-central, frankfurt, etc.
     branch: main
     autoDeploy: true
