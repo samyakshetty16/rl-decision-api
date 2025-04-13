@@ -225,7 +225,7 @@ class DummyEnv(gym.Env):
 
 # Load model
 model_path = "rl_models/dqn_loan_model.zip"
-feature_len = 15  # Change this to the number of features used in training
+feature_len = 34  # Change this to the number of features used in training
 env = DummyEnv(feature_len)
 model = DQN.load(model_path, env=env)
 
