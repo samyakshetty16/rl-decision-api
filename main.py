@@ -133,7 +133,7 @@ from stable_baselines3 import DQN
 app = FastAPI(title="RL Loan Decision API")
 
 # Load the trained DQN model
-dqn_model = DQN.load("models/dqn_loan_model.zip")  # adjust the path as needed
+dqn_model = DQN.load("rl_models/dqn_model.zip")  # adjust the path as needed
 
 # Final features expected by RL model (in exact order)
 feature_names = [
