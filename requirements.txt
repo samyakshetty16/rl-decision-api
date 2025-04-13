@@ -9,4 +9,4 @@ stable-baselines3
 gymnasium
 pydantic
 gym
-
+shimmy>=2.0
