@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 .pyc
 *.pkl
-*.zip
++ # *.zip
 .env
 *.log
 *.db

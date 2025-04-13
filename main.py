@@ -122,6 +122,7 @@ def get_rl_action(input_data: StateInput):
 
 
 
+'''
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import numpy as np
@@ -199,3 +200,49 @@ def get_rl_decision(data: RLInput):
 @app.get("/")
 def root():
     return {"message": "RL Loan Decision API is up and running!"}
+'''
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import numpy as np
+import gym
+import pandas as pd
+from stable_baselines3 import DQN
+
+app = FastAPI()
+
+# Dummy environment to reuse for observation shape
+class DummyEnv(gym.Env):
+    def __init__(self, feature_len):
+        super(DummyEnv, self).__init__()
+        self.observation_space = gym.spaces.Box(
+            low=-np.inf, high=np.inf, shape=(feature_len,), dtype=np.float32
+        )
+        self.action_space = gym.spaces.Discrete(2)
+
+    def reset(self): pass
+    def step(self, action): pass
+
+# Load model
+model_path = "rl_models/dqn_loan_model.zip"
+feature_len = 15  # Change this to the number of features used in training
+env = DummyEnv(feature_len)
+model = DQN.load(model_path, env=env)
+
+# Input schema
+class LoanApplication(BaseModel):
+    features: list  # List of floats in the same order as training data
+
+@app.get("/")
+def home():
+    return {"message": "Loan Approval Prediction API is running."}
+
+@app.post("/predict/")
+def predict(application: LoanApplication):
+    features = np.array(application.features).astype(np.float32)
+    if len(features) != feature_len:
+        raise HTTPException(status_code=400, detail=f"Expected {feature_len} features.")
+    
+    action, _ = model.predict(features.reshape(1, -1), deterministic=True)
+    decision = "Approve" if action == 1 else "Deny"
+    return {"prediction": decision}
