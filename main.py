@@ -208,8 +208,20 @@ import numpy as np
 import gym
 import pandas as pd
 from stable_baselines3 import DQN
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+
+# CORS setup
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with ["http://localhost:3000"] or your frontend domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Dummy environment to reuse for observation shape
 class DummyEnv(gym.Env):
